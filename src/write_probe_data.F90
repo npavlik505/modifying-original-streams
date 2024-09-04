@@ -41,6 +41,8 @@ subroutine write_spanwise_probe_helper(probe_number, i, icyc, j1, j2, j3)
 
     filenumber = 21
 
+    call system("mkdir -p csv_data")
+
     write(filename, "(A20, I1.1, A1, I5.5, A7)") "csv_data/span_probe_", probe_number, "_", icyc, ".binary"
     open(filenumber, file=filename, form="unformatted", access="stream")
 
@@ -57,39 +59,6 @@ subroutine write_spanwise_probe_helper(probe_number, i, icyc, j1, j2, j3)
     close(filenumber)
 
 end subroutine write_spanwise_probe_helper
-
-
-subroutine write_streamwise_probe(probe_number, j)
-    use mod_streams
-    implicit none
-
-    integer:: probe_number, i,j,k
-    real(mykind) :: rho, rhou, rhov, rhow, uwrite, vwrite, wwrite
-    character(len=70) :: filename
-
-    k = nz/2
-
-    write(filename, "(A22, I1.1, A1, I5.5, A4)") "csv_data/stream_probe_", probe_number, "_", icyc, ".csv"
-
-    open(299,file=filename)
-    write(299, *) "rho, u, v, w"
-
-    do i=1,nx
-        rho =  w(1,i,j,k)
-        rhou = w(2,i,j,k)
-        rhov = w(3,i,j,k)
-        rhow = w(4,i,j,k)
-
-        uwrite = rhou / rho
-        vwrite = rhov / rho
-        wwrite = rhow / rho
-
-        write(299, "(E36.30, A1, E36.30, A1, E36.30, A1, E36.30)") rho, ",", uwrite, ",", vwrite, ",", wwrite
-
-    enddo
-
-
-end subroutine write_streamwise_probe
 
 
 subroutine write_probe_data()
@@ -123,8 +92,7 @@ subroutine write_probe_data()
     !  |                    |                    |                   |                    |    
     !  |                    |                    |                   |                    |    
     !  |         X          |                   X|                   |          X         |    
-    !  |                    |                    |                   |                    |    
-    !  oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo    
+    !  |                    |                    |                   |                    |        
     !  |                    |                    |                   |                    |    
     !  |                    |                    |                   |                    |    
     !  |                    |                    |                   |                    |    
@@ -132,7 +100,6 @@ subroutine write_probe_data()
     !  |_________X__________|___________________X|___________________|__________X_________|
     ! 
     !  X is a span-wise probe (into the page)
-    !  o is a streamwise probe in the midplane
 
     nx_start = 1 + nrank * nx
     nx_end = nx_start + nx
@@ -151,9 +118,6 @@ subroutine write_probe_data()
     if (nx_start < probe_i_3 .and. probe_i_3 < nx_end) then
         call write_spanwise_probe_helper(3,probe_i_3, icyc, probe_j_1,probe_j_2, probe_j_3)
     endif
-
-    !call write_streamwise_probe(nrank+1, ny/2)
-
 
 end subroutine write_probe_data
 
