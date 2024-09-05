@@ -20,7 +20,7 @@ subroutine manage_solver
 
  if (telaps>tsol_restart(istore_restart)) saverst = .true.
  if (mod(icyc, 1000) == 0) savespanaverage= .true.
- if (mod(icyc, 50) == 0) saveprobe = .true.
+ if (mod(icyc, 10) == 0) saveprobe = .true.
 
  ! check if we should write probe information
 ! if (save_probe_steps > 0) then

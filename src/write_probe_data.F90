@@ -32,7 +32,35 @@ subroutine to_file(filenumber, i,j)
 
 end subroutine to_file
 
+!! write_spanwise_probe_helper producing binary with every call
+!subroutine write_spanwise_probe_helper(probe_number, i, icyc, j1, j2, j3)
+!    implicit none
+!    integer :: i, probe_number, icyc, filenumber
+!    integer :: j1, j2, j3
+!    character(len=120) :: filename
+!
+!    filenumber = 21
+!
+!    call system("mkdir -p csv_data")
+!
+!    write(filename, "(A20, I1.1, A1, I5.5, A7)") "csv_data/span_probe_", probe_number, "_", icyc, ".binary"
+!    open(filenumber, file=filename, form="unformatted", access="stream")
+!
+!    ! viscous data
+!    call to_file(filenumber, i, j1)
+!
+!    ! log law data
+!    call to_file(filenumber, i, j2)
+!
+!    ! free stream data
+!    call to_file(filenumber, i, j3)
+!
+!    call flush(filenumber)
+!    close(filenumber)
+!
+!end subroutine write_spanwise_probe_helper
 
+! write_spanwise_probe_helper producing single binary with data from all calls
 subroutine write_spanwise_probe_helper(probe_number, i, icyc, j1, j2, j3)
     implicit none
     integer :: i, probe_number, icyc, filenumber
@@ -41,16 +69,31 @@ subroutine write_spanwise_probe_helper(probe_number, i, icyc, j1, j2, j3)
 
     filenumber = 21
 
+    ! Ensure the directory exists
     call system("mkdir -p csv_data")
 
-    write(filename, "(A20, I1.1, A1, I5.5, A7)") "csv_data/span_probe_", probe_number, "_", icyc, ".binary"
-    open(filenumber, file=filename, form="unformatted", access="stream")
-
+    ! Use fixed filenames (remove probe_number and icyc from the filename)
+    write(filename, "(A19, I1.1, A15)") "csv_data/span_probe", probe_number, "_viscous.binary"
+    open(filenumber, file=filename, form="unformatted", access="stream", status="unknown", position="append")
     ! viscous data
     call to_file(filenumber, i, j1)
 
+    call flush(filenumber)
+    close(filenumber)
+
+    ! Repeat for log law data and free stream data using separate fixed filenames
+
+    write(filename, "(A19, I1.1, A26)") "csv_data/span_probe", probe_number, "_just_above_viscous.binary"
+    open(filenumber, file=filename, form="unformatted", access="stream", status="unknown", position="append")
+
     ! log law data
     call to_file(filenumber, i, j2)
+
+    call flush(filenumber)
+    close(filenumber)
+
+    write(filename, "(A19, I1.1, A19)") "csv_data/span_probe", probe_number, "_half_height.binary"
+    open(filenumber, file=filename, form="unformatted", access="stream", status="unknown", position="append")
 
     ! free stream data
     call to_file(filenumber, i, j3)
