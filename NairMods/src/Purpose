@@ -1,0 +1,1 @@
+This combines NairEdits 10.4, which produced a binary file from computeav.F90, 10.14, which added wall shear stress and velocity magnitude to the data produced from computeav.F90, and 11.1, which added code to 10.4 to produce a single binary file instead of multiple. 

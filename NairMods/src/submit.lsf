@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#BSUB -P CFD191
+#BSUB -W 12:00
+#BSUB -nnodes 256
+#BSUB -alloc_flags gpumps
+#BSUB -J SBLI_super_ctrl
+#BSUB -o SBLI_super_ctrl.%J
+#BSUB -e SBLI_super_ctrl.%J
+
+
+
+module load nvhpc/22.9
+
+date
+
+jsrun --smpiargs="-gpu" -n256 -a4 -c4 -g4 ./streams.exe &> log.run
+
