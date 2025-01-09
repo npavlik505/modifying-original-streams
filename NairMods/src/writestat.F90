@@ -17,6 +17,7 @@ subroutine writestat2d
  integer :: ntotxy
  integer (kind=mpi_offset_kind) :: offset
  integer(kind=mpi_offset_kind) :: filesize
+ integer :: FiftyKrestart ! Quick fix to produce stat_ALL.bin when restarting at 50000 iterations and istat = 5
  character(8) :: nastat
 !
  if (masterproc) write(*,*) 'Writing stat.bin'
@@ -36,9 +37,10 @@ subroutine writestat2d
   starts(3) = 0
   ntotxy = nx*ny
 !
+  FiftyKrestart = 50005
   call mpi_type_create_subarray(3,sizes,subsizes,starts,mpi_order_fortran,mpi_prec,filetype,iermpi)
   call mpi_type_commit(filetype,iermpi)
-  if (icyc/istat == 1) then
+  if (icyc == FiftyKrestart) then
    call mpi_file_open(mp_cartx,'stat_ALL.bin',mpi_mode_create+mpi_mode_wronly,mpi_info_null,mpi_io_file,iermpi)
    offset = 0
   else

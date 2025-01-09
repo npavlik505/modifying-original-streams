@@ -10,7 +10,7 @@ subroutine compute_av
  real(mykind) :: ri,rlam,rmu
  real(mykind) :: tt,tt2
  real(mykind) :: uu,vv,ww
- real(mykind) :: uu2,vv2,ww2
+ real(mykind) :: uu2,vv2,ww2, VelMag
  integer :: i,j,k,npt
  real(mykind) :: dudyw, dy
 !
@@ -41,6 +41,7 @@ subroutine compute_av
     ww2  = ww*ww
     pp2  = pp*pp
     tt2  = tt*tt
+    VelMag = sqrt(uu2 + vv2 + ww2) 
 
 
 !
@@ -64,6 +65,7 @@ subroutine compute_av
     w_avz(18,i,j) = w_avz(18,i,j)+rhow*ww
     w_avz(19,i,j) = w_avz(19,i,j)+rhou*vv
     w_avz(20,i,j) = w_avz(20,i,j)+rmu
+    w_avz(21,i,j) = w_avz(21,i,j)+VelMag
 !
    enddo
   enddo
@@ -74,8 +76,7 @@ subroutine compute_av
        dudyw = (-22._mykind*w_avz(2,i,1)+36._mykind*w_avz(2,i,2)-18._mykind*w_avz(2,i,3)+ 4._mykind*w_avz(2,i,4))/12._mykind
        dy    = (-22._mykind*   y(  1)+36._mykind*   y(  2)-18._mykind*   y(  3)+ 4._mykind*   y(  4))/12._mykind
        dudyw = dudyw/dy
-       w_avz(21,i,j)  = w_avz(20,i,1)*dudyw
-       w_avz(22,i,j)  = sqrt(w_avz(8,i,1) + w_avz(9,i,1) + w_avz(10,i,1))
+       w_avz(22,i,j)  = w_avz(20,i,1)*dudyw
    enddo
  enddo
 
